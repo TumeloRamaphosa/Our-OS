@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studex Master OS v2.1 — Animated Command Centre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@300;400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --gold: #C9A84C;
+  --obsidian: #0A0A0A;
+  --red: #FF4444;
+  --cyan: #00FFFF;
+  --green: #6BCF7F;
+}
+
+body {
+  background: linear-gradient(135deg, var(--obsidian) 0%, #1a0a2e 100%);
+  color: #E8DDBA;
+  font-family: 'Cormorant Garamond', serif;
+  overflow-x: hidden;
+}
+
+.master-os {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  padding: 20px 40px;
+  border-bottom: 2px solid var(--gold);
+  background: linear-gradient(180deg, rgba(201, 168, 76, 0.1) 0%, transparent 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  position: sticky;
+  top: 0;
+}
+
+.logo {
+  font-family: 'Bebas Neue';
+  font-size: 28px;
+  color: var(--gold);
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(201, 168, 76, 0.5);
+}
+
+.system-status {
+  display: flex;
+  gap: 15px;
+  font-family: 'Space Mono';
+  font-size: 10px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6BCF7F;
+  box-shadow: 0 0 8px #6BCF7F;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* MAIN CONTENT */
+.content {
+  display: flex;
+  min-height: calc(100vh - 80px);
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 180px;
+  background: rgba(20, 17, 12, 0.6);
+  border-right: 1px solid rgba(201, 168, 76, 0.2);
+  padding: 20px;
+  overflow-y: auto;
+  font-family: 'Space Mono';
+  font-size: 10px;
+}
+
+.menu-section {
+  margin-bottom: 18px;
+}
+
+.menu-title {
+  color: var(--gold);
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  font-size: 9px;
+}
+
+.menu-item {
+  padding: 6px 0;
+  color: #6a6250;
+  cursor: pointer;
+  transition: color 0.2s;
+  font-size: 9px;
+}
+
+.menu-item:hover, .menu-item.active {
+  color: var(--gold);
+}
+
+/* WORLD VIEW */
+.world-view {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  perspective: 1000px;
+}
+
+/* REGIONS */
+.regions-container {
+  padding: 40px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 100%;
+}
+
+.region-card {
+  border: 2px solid var(--gold);
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.05) 0%, rgba(0, 0, 0, 0.3) 100%);
+  border-radius: 6px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.region-card:hover {
+  background: linear-gradient(135deg, rgba(201, 168, 76, 0.15) 0%, rgba(0, 0, 0, 0.2) 100%);
+  box-shadow: 0 0 20px rgba(201, 168, 76, 0.3);
+  border-color: #FFD700;
+}
+
+.region-title {
+  font-family: 'Bebas Neue';
+  font-size: 16px;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.region-item {
+  padding: 4px 0;
+  border-left: 2px solid var(--gold);
+  padding-left: 8px;
+  margin-bottom: 4px;
+  font-size: 10px;
+  color: #6a6250;
+}
+
+.region-item strong {
+  color: var(--gold);
+}
+
+/* AGENT CONSTELLATION */
+.agent-constellation {
+  position: absolute;
+  top: 0;
+  left: 200px;
+  right: 0;
+  height: 500px;
+  background: radial-gradient(ellipse at center, rgba(201, 168, 76, 0.05) 0%, transparent 70%);
+  perspective: 1200px;
+}
+
+.constellation-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.agent-pods {
+  position: absolute;
+  inset: 0;
+}
+
+.agent-pod {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Mono';
+  font-size: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  z-index: 10;
+}
+
+.agent-pod:hover {
+  background: rgba(201, 168, 76, 0.15);
+  box-shadow: 0 0 20px rgba(201, 168, 76, 0.4);
+  transform: scale(1.1);
+}
+
+.agent-pod::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(201, 168, 76, 0.8);
+  border-radius: 50%;
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+.agent-name {
+  color: var(--gold);
+  font-weight: bold;
+  margin-top: 3px;
+  font-size: 9px;
+  z-index: 1;
+}
+
+.agent-status {
+  color: #6BCF7F;
+  font-size: 7px;
+  margin-top: 2px;
+  z-index: 1;
+}
+
+.agent-code {
+  color: var(--cyan);
+  font-size: 6px;
+  margin-top: 1px;
+  opacity: 0.8;
+  z-index: 1;
+}
+
+/* CODE FLOW SVG */
+.code-flow-container {
+  position: absolute;
+  top: 0;
+  left: 200px;
+  right: 0;
+  height: 500px;
+  pointer-events: none;
+}
+
+/* PARTNERS HORIZONTAL SCROLL */
+.partners-section {
+  position: relative;
+  height: 180px;
+  background: linear-gradient(180deg, rgba(20, 17, 12, 0.6) 0%, rgba(20, 17, 12, 0.3) 100%);
+  border-top: 2px solid #FF4444;
+  border-bottom: 1px solid rgba(255, 68, 68, 0.3);
+  padding: 12px;
+  overflow: hidden;
+}
+
+.partners-title {
+  font-family: 'Bebas Neue';
+  font-size: 11px;
+  color: #FF4444;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.partners-track {
+  display: flex;
+  gap: 6px;
+  height: 140px;
+  overflow-x: auto;
+}
+
+.partner-vm {
+  flex-shrink: 0;
+  width: 95px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #FF4444;
+  border-radius: 3px;
+  padding: 6px;
+  text-align: center;
+  font-family: 'Space Mono';
+  font-size: 7px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.partner-vm:hover {
+  background: rgba(255, 68, 68, 0.1);
+  box-shadow: 0 0 12px rgba(255, 68, 68, 0.3);
+  border-color: #FF9999;
+}
+
+.partner-logo {
+  width: 32px;
+  height: 32px;
+  background: rgba(201, 168, 76, 0.05);
+  border: 1px solid rgba(201, 168, 76, 0.1);
+  border-radius: 2px;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--gold);
+}
+
+.partner-name {
+  color: #FF4444;
+  font-weight: bold;
+  font-size: 8px;
+  margin-bottom: 1px;
+}
+
+.partner-status {
+  color: #6BCF7F;
+  font-size: 6px;
+}
+
+/* AGENT EXECUTION GRID */
+.agent-grid {
+  position: relative;
+  height: 200px;
+  background: linear-gradient(180deg, transparent 0%, rgba(20, 17, 12, 0.8) 100%);
+  border-top: 2px solid var(--gold);
+  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.grid-pod {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--gold);
+  border-radius: 3px;
+  padding: 8px;
+  text-align: center;
+  font-family: 'Space Mono';
+  font-size: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.grid-pod:hover {
+  background: rgba(201, 168, 76, 0.15);
+  box-shadow: 0 0 15px rgba(201, 168, 76, 0.4);
+}
+
+.grid-pod-name {
+  color: var(--gold);
+  font-weight: bold;
+  margin-bottom: 3px;
+  font-size: 9px;
+}
+
+.grid-pod-status {
+  color: #6BCF7F;
+  font-size: 7px;
+  margin-bottom: 2px;
+}
+
+.grid-pod-code {
+  color: var(--cyan);
+  font-size: 6px;
+  opacity: 0.8;
+}
+
+/* FOOTER */
+.footer {
+  padding: 12px 40px;
+  border-top: 1px solid rgba(201, 168, 76, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Space Mono';
+  font-size: 9px;
+  color: #6a6250;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cyan);
+}
+
+@media (max-width: 768px) {
+  .sidebar { width: 0; padding: 0; border: none; }
+  .content { flex-direction: column; }
+  .agent-constellation { left: 0; }
+  .code-flow-container { left: 0; }
+  .regions-container { grid-template-columns: 1fr; padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="master-os">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">⚡ STUDEX MASTER OS v2.1</div>
+    <div class="system-status">
+      <div class="status-item">
+        <div class="status-dot"></div>
+        <span>NEXUS: ONLINE</span>
+      </div>
+      <div class="status-item">
+        <div class="status-dot"></div>
+        <span>9 AGENTS ACTIVE</span>
+      </div>
+      <div class="status-item">
+        <div class="status-dot"></div>
+        <span>5 DATA CENTERS</span>
+      </div>
+      <div class="status-item">
+        <div class="status-dot"></div>
+        <span>BITFURY: CONNECTED</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="menu-section">
+        <div class="menu-title">◆ COMMAND</div>
+        <div class="menu-item active">Dashboard</div>
+        <div class="menu-item">Agents</div>
+        <div class="menu-item">Workflows</div>
+      </div>
+      <div class="menu-section">
+        <div class="menu-title">◆ REGIONS</div>
+        <div class="menu-item">Rwanda Hub</div>
+        <div class="menu-item">Cape Town</div>
+        <div class="menu-item">Nigeria</div>
+      </div>
+      <div class="menu-section">
+        <div class="menu-title">◆ SYSTEM</div>
+        <div class="menu-item">Relay Status</div>
+        <div class="menu-item">Agent Health</div>
+        <div class="menu-item">Message Queue</div>
+      </div>
+    </div>
+
+    <!-- WORLD VIEW -->
+    <div class="world-view">
+      <!-- AGENT CONSTELLATION (ANIMATED) -->
+      <div class="agent-constellation">
+        <svg class="constellation-canvas" id="constellationCanvas"></svg>
+        <div class="code-flow-container">
+          <svg id="codeFlowSvg" style="position:absolute;inset:0;width:100%;height:100%;"></svg>
+        </div>
+        <div class="agent-pods" id="agentPods"></div>
+      </div>
+
+      <!-- REGIONS (SCROLLABLE) -->
+      <div class="regions-container" style="margin-top: 520px;">
+        <div class="region-card">
+          <div class="region-title">🇷🇼 RWANDA HUB</div>
+          <div class="region-item"><strong>Data Centre:</strong> Kigali</div>
+          <div class="region-item"><strong>Status:</strong> LIVE</div>
+          <div class="region-item"><strong>Focus:</strong> Executive Access</div>
+          <div class="region-item"><strong>Revenue:</strong> $50K/co</div>
+        </div>
+        <div class="region-card">
+          <div class="region-title">🇿🇦 CAPE TOWN</div>
+          <div class="region-item"><strong>Data Centre:</strong> SAX DC</div>
+          <div class="region-item"><strong>Launch:</strong> Oct 31, 2026</div>
+          <div class="region-item"><strong>Purpose:</strong> Bitcoin Trust</div>
+          <div class="region-item"><strong>Status:</strong> OPERATIONAL</div>
+        </div>
+        <div class="region-card">
+          <div class="region-title">🇳🇬 NIGERIA</div>
+          <div class="region-item"><strong>Market:</strong> $3.3B pharma</div>
+          <div class="region-item"><strong>Regulator:</strong> NAFDAC</div>
+          <div class="region-item"><strong>Timeline:</strong> 3-6 months</div>
+          <div class="region-item"><strong>Status:</strong> DEPLOYMENT</div>
+        </div>
+        <div class="region-card">
+          <div class="region-title">🇸🇬 SINGAPORE</div>
+          <div class="region-item"><strong>Provider:</strong> Alibaba Cloud</div>
+          <div class="region-item"><strong>Model:</strong> Qwen MaaS</div>
+          <div class="region-item"><strong>Cost:</strong> 50–70% reduction</div>
+          <div class="region-item"><strong>Status:</strong> LIVE</div>
+        </div>
+      </div>
+
+      <!-- PARTNERS HORIZONTAL SCROLL -->
+      <div class="partners-section">
+        <div class="partners-title">☁️ CLOUD PARTNERS & INFRASTRUCTURE</div>
+        <div class="partners-track" id="partnersTrack">
+          <div class="partner-vm"><div class="partner-logo">⚡</div><div class="partner-name">Bitfury</div><div class="partner-status">MINING</div></div>
+          <div class="partner-vm"><div class="partner-logo">☁️</div><div class="partner-name">Alibaba</div><div class="partner-status">COMPUTE</div></div>
+          <div class="partner-vm"><div class="partner-logo">🔵</div><div class="partner-name">Google</div><div class="partner-status">ML OPS</div></div>
+          <div class="partner-vm"><div class="partner-logo">🟠</div><div class="partner-name">AWS</div><div class="partner-status">BACKUP</div></div>
+          <div class="partner-vm"><div class="partner-logo">🏦</div><div class="partner-name">AFREXIMBANK</div><div class="partner-status">FINANCE</div></div>
+          <div class="partner-vm"><div class="partner-logo">🌐</div><div class="partner-name">Uvelka</div><div class="partner-status">INFRA</div></div>
+          <div class="partner-vm"><div class="partner-logo">🎯</div><div class="partner-name">Archer.ai</div><div class="partner-status">AGENTS</div></div>
+          <div class="partner-vm"><div class="partner-logo">📱</div><div class="partner-name">Mobiry</div><div class="partner-status">MOBILE</div></div>
+          <div class="partner-vm"><div class="partner-logo">🎨</div><div class="partner-name">Art Eng</div><div class="partner-status">MEDIA</div></div>
+          <div class="partner-vm"><div class="partner-logo">🌍</div><div class="partner-name">AfricaBiz</div><div class="partner-status">DATA</div></div>
+        </div>
+      </div>
+
+      <!-- AGENT EXECUTION GRID -->
+      <div class="agent-grid">
+        <div class="grid-pod"><div class="grid-pod-name">NALEDI</div><div class="grid-pod-status">🟢 CMO</div><div class="grid-pod-code">> content.queue()</div></div>
+        <div class="grid-pod"><div class="grid-pod-name">OPENCLAW</div><div class="grid-pod-status">🟢 Strategy</div><div class="grid-pod-code">> creative.gen()</div></div>
+        <div class="grid-pod"><div class="grid-pod-name">CASHMONEY</div><div class="grid-pod-status">🟢 CFO</div><div class="grid-pod-code">> ledger.sync()</div></div>
+        <div class="grid-pod"><div class="grid-pod-name">ADAM</div><div class="grid-pod-status">🟢 CTO</div><div class="grid-pod-code">> infra.monitor()</div></div>
+        <div class="grid-pod"><div class="grid-pod-name">CHARLIE</div><div class="grid-pod-status">🟢 Voice</div><div class="grid-pod-code">> calls.intake()</div></div>
+        <div class="grid-pod"><div class="grid-pod-name">EDDIE</div><div class="grid-pod-status">🟢 Ads</div><div class="grid-pod-code">> campaigns.run()</div></div>
+        <div class="grid-pod"><div class="grid-pod-name">RALF</div><div class="grid-pod-status">🟢 Loop</div><div class="grid-pod-code">> tasks.orchestrate()</div></div>
+        <div class="grid-pod"><div class="grid-pod-name">HERMES</div><div class="grid-pod-status">🟢 Router</div><div class="grid-pod-code">> models.dispatch()</div></div>
+        <div class="grid-pod"><div class="grid-pod-name">KATIA</div><div class="grid-pod-status">🟢 CAO</div><div class="grid-pod-code">> ops.execute()</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>Studex Master OS v2.1 — Rwanda · Cape Town · Nigeria · Singapore · Bitfury Ecosystem</div>
+    <div>ANIMATED CONSTELLATION | LIVE AGENT EXECUTION | Oct 31 Launch</div>
+  </div>
+</div>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// Agent constellation positions
+const agents = [
+  { name: 'NALEDI', x: 200, y: 100, role: 'CMO', code: '> content.queue()' },
+  { name: 'OPENCLAW', x: 400, y: 150, role: 'Strategy', code: '> creative.gen()' },
+  { name: 'CASHMONEY', x: 600, y: 100, role: 'CFO', code: '> ledger.sync()' },
+  { name: 'ADAM', x: 300, y: 300, role: 'CTO', code: '> infra.monitor()' },
+  { name: 'CHARLIE', x: 500, y: 350, role: 'Voice', code: '> calls.intake()' },
+  { name: 'EDDIE', x: 700, y: 300, role: 'Ads', code: '> campaigns.run()' },
+  { name: 'RALF', x: 400, y: 450, role: 'Loop', code: '> tasks.orchestrate()' },
+  { name: 'HERMES', x: 600, y: 400, role: 'Router', code: '> models.dispatch()' },
+  { name: 'KATIA', x: 800, y: 200, role: 'CAO', code: '> ops.execute()' },
+];
+
+const constellationContainer = document.getElementById('agentPods');
+const codeFlowSvg = document.getElementById('codeFlowSvg');
+
+// Create agent pods
+agents.forEach((agent, i) => {
+  const pod = document.createElement('div');
+  pod.className = 'agent-pod';
+  pod.style.left = agent.x + 'px';
+  pod.style.top = agent.y + 'px';
+  pod.innerHTML = `
+    <div class="agent-name">${agent.name}</div>
+    <div class="agent-status">🟢 ${agent.role}</div>
+    <div class="agent-code">${agent.code}</div>
+  `;
+  pod.style.opacity = '0';
+  pod.style.transform = 'translateY(20px) scale(0.8)';
+  constellationContainer.appendChild(pod);
+
+  // Animate in
+  gsap.to(pod, {
+    opacity: 1,
+    transform: 'translateY(0) scale(1)',
+    duration: 0.8,
+    delay: i * 0.1,
+    ease: 'back.out',
+  });
+
+  // Floating animation
+  gsap.to(pod, {
+    y: Math.sin(i * 0.5) * 20,
+    duration: 4 + i * 0.2,
+    repeat: -1,
+    yoyo: true,
+    ease: 'sine.inOut',
+  });
+
+  // Hover physics
+  pod.addEventListener('mouseenter', () => {
+    gsap.to(pod, { scale: 1.15, boxShadow: '0 0 30px rgba(201, 168, 76, 0.6)', duration: 0.3 });
+  });
+  pod.addEventListener('mouseleave', () => {
+    gsap.to(pod, { scale: 1, boxShadow: 'none', duration: 0.3 });
+  });
+});
+
+// Code flow lines (SVG connections between agents)
+const svgNS = 'http://www.w3.org/2000/svg';
+agents.forEach((agent, i) => {
+  if (i < agents.length - 1) {
+    const nextAgent = agents[i + 1];
+    const line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', agent.x + 50);
+    line.setAttribute('y1', agent.y + 50);
+    line.setAttribute('x2', nextAgent.x + 50);
+    line.setAttribute('y2', nextAgent.y + 50);
+    line.setAttribute('stroke', '#00FFFF');
+    line.setAttribute('stroke-width', '1');
+    line.setAttribute('opacity', '0.4');
+    line.style.mixBlendMode = 'screen';
+    codeFlowSvg.appendChild(line);
+
+    // Animated particle along line
+    gsap.set(line, { strokeDasharray: Math.hypot(nextAgent.x - agent.x, nextAgent.y - agent.y) });
+    gsap.to(line, {
+      strokeDashoffset: 0,
+      duration: 3,
+      repeat: -1,
+      ease: 'power1.inOut',
+    });
+  }
+});
+
+// Region cards scroll-reveal
+gsap.to('.region-card', {
+  opacity: 1,
+  transform: 'translateY(0)',
+  duration: 0.8,
+  stagger: 0.1,
+  scrollTrigger: {
+    trigger: '.regions-container',
+    start: 'top 80%',
+    once: true,
+  },
+});
+
+// Ambient audio
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+function playAmbientTone() {
+  const osc = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+  osc.frequency.value = 55;
+  osc.connect(gain);
+  gain.connect(audioContext.destination);
+  gain.gain.setValueAtTime(0.02, audioContext.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 3);
+  osc.start(audioContext.currentTime);
+  osc.stop(audioContext.currentTime + 3);
+}
+
+setInterval(() => {
+  if (audioContext.state === 'running') {
+    playAmbientTone();
+  }
+}, 10000);
+
+// Menu interactions
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+// Live agent status updates
+const statuses = ['🟢 executing', '🟡 processing', '🟢 active'];
+setInterval(() => {
+  document.querySelectorAll('.agent-status').forEach(status => {
+    status.textContent = statuses[Math.floor(Math.random() * statuses.length)];
+  });
+}, 3000);
+
+// Partner VM activity
+setInterval(() => {
+  const vms = document.querySelectorAll('.partner-status');
+  const activities = ['🟢 ONLINE', '🟡 SYNC', '🟢 ACTIVE'];
+  vms.forEach(vm => {
+    vm.textContent = activities[Math.floor(Math.random() * activities.length)];
+  });
+}, 4000);
+
+console.log('✅ Master OS v2.1 Animated — Agents in motion, code flowing, ambient tone active');
+</script>
+
+</body>
+</html>
