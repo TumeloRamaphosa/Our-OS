@@ -59,9 +59,13 @@ npm run dev
 open master-os-animation.html
 ```
 
-### Mac Mini
+### This MacBook first
 
-Second desk is `projects-mac-mini` (`100.112.109.40`). Clone this repo there and follow [machines/mac-mini.md](machines/mac-mini.md).
+Primary desk is this MacBook. Read [machines/macbook.md](machines/macbook.md), then the agent map in [agents/registry.md](agents/registry.md). Auto-Meat and the Orgo computers are tied there.
+
+### Mac Mini later
+
+Second desk is `projects-mac-mini` (`100.112.109.40`). Pull this repo there when this MacBook desk is accepted, then follow [machines/mac-mini.md](machines/mac-mini.md).
 
 Paste [prompts/grokbot-join-our-os.md](prompts/grokbot-join-our-os.md) to the Grokbot agents so they work on this OS with the MacBook.
 

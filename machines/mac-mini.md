@@ -1,6 +1,6 @@
 # Mac Mini — second desk
 
-Open this file after you clone Our-OS on the Mac Mini. This machine joins the OS. It does not become a new operating system.
+Do this after the MacBook desk in [macbook.md](macbook.md) is on `main`. Pull, then open this file. This machine joins the OS. It does not become a new operating system.
 
 Checked from the MacBook on 28 September 2026. Tailscale on that network could not reach the coordination server (the health check named Fortinet). Treat the addresses below as the last tailnet record, then confirm them on the Mini.
 
