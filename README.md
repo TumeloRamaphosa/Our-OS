@@ -59,6 +59,12 @@ npm run dev
 open master-os-animation.html
 ```
 
+### Mac Mini
+
+Second desk is `projects-mac-mini` (`100.112.109.40`). Clone this repo there and follow [machines/mac-mini.md](machines/mac-mini.md).
+
+Paste [prompts/grokbot-join-our-os.md](prompts/grokbot-join-our-os.md) to the Grokbot agents so they work on this OS with the MacBook.
+
 ---
 
 ## 📡 Deployment
